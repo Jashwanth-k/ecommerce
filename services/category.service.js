@@ -1,7 +1,8 @@
-const { categorySchema } = require("../models/category.model");
+const db = require("../models/index");
+
 class CategoryService {
   constructor() {
-    this.schema = categorySchema;
+    this.schema = db.category;
   }
 
   createCategory(category) {
@@ -14,6 +15,15 @@ class CategoryService {
 
   getCategoryById(id) {
     return this.schema.findOne({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  updateCategory(id, data) {
+    return this.schema.update(data, {
+      returning: true,
       where: {
         id: id,
       },

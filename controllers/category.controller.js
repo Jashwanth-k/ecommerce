@@ -1,54 +1,92 @@
-const { request, response } = require("express");
-const express = require("express");
-const categoryRouter = express.Router();
-const { executeWithSync } = require("../connections/sequelize.connection");
 const { categoryService } = require("../services/category.service");
 
-categoryRouter.get("/:id", (request, response) => {
-  executeWithSync(
-    categoryService
-      .deleteCategory(parseInt(request.params.id))
-      .then((data) => {
-        response.writeHead(200);
-        response.end(JSON.stringify({ message: "row deleted" }));
-      })
-      .catch((err) => {
-        response.writeHead(500);
-        response.end(JSON.stringify({ message: "error occured!" }));
-      })
-  );
-});
-
-categoryRouter.get("/", (request, response) => {
+function create(request, response) {
   response.setHeader("content-type", "application/json");
-  executeWithSync(
-    categoryService
-      .getCategories()
-      .then((data) => {
-        response.writeHead(200);
-        response.end(JSON.stringify(data));
-      })
-      .catch((err) => {
-        response.writeHead(500);
-        response.end(JSON.stringify({ message: "error occured" }));
-      })
-  );
-});
+  categoryService
+    .createCategory(request.body)
+    .then((data) => {
+      let returnValue = data;
+      returnValue.message = "category created successfully";
+      response.writeHead(200);
+      response.end(JSON.stringify(returnValue));
+    })
+    .catch((err) => {
+      response.writeHead(500);
+      response.end(JSON.stringify({ message: "error occured" }));
+    });
+}
 
-categoryRouter.post("/", (request, response) => {
+function findAll(request, response) {
   response.setHeader("content-type", "application/json");
-  executeWithSync(
-    categoryService
-      .createCategory(request.body)
-      .then((data) => {
-        response.writeHead(200);
-        response.end(JSON.stringify(data.dataValues));
-      })
-      .catch((err) => {
-        response.writeHead(500);
-        response.end(JSON.stringify({ message: "error occured" }));
-      })
-  );
-});
+  categoryService
+    .getCategories()
+    .then((data) => {
+      let returnValue = data;
+      returnValue.message = "categories fetched successfully";
+      response.writeHead(200);
+      response.end(JSON.stringify(returnValue));
+    })
+    .catch((err) => {
+      response.writeHead(500);
+      response.end(JSON.stringify({ message: "error occured" }));
+    });
+}
 
-module.exports = { categoryRouter };
+function findOne(request, response) {
+  const categoryId = parseInt(request.params.id);
+
+  response.setHeader("content-type", "application/json");
+  categoryService
+    .getCategoryById(categoryId)
+    .then((data) => {
+      let returnValue = data.dataValues;
+      returnValue.message = "cateogry fetched successfully";
+      response.writeHead(200);
+      response.end(JSON.stringify(returnValue));
+    })
+    .catch((err) => {
+      response.writeHead(500);
+      response.end(
+        JSON.stringify({ message: "No category found with given id" })
+      );
+    });
+}
+
+function update(request, response) {
+  response.setHeader("content-type", "application/json");
+  categoryService
+    .updateCategory(parseInt(request.params.id), request.body)
+    .then((data) => {
+      if (data[1] !== 1) throw new Error("unable to update category");
+      findOne(request, response);
+    })
+    .catch((err) => {
+      response.writeHead(500);
+      response.end(JSON.stringify({ message: `${err}` }));
+    });
+}
+
+function deleteCategory(request, response) {
+  const categoryId = parseInt(request.params.id);
+  response.setHeader("content-type", "application/json");
+
+  categoryService
+    .deleteCategory(categoryId)
+    .then((data) => {
+      if (data === 0) throw new Error("No category found with given id");
+      response.writeHead(200);
+      response.end(JSON.stringify({ message: "row deleted" }));
+    })
+    .catch((err) => {
+      response.writeHead(500);
+      response.end(JSON.stringify({ message: `${err}` }));
+    });
+}
+
+module.exports = {
+  create,
+  findAll,
+  findOne,
+  update,
+  deleteCategory,
+};

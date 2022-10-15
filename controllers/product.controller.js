@@ -2,17 +2,7 @@ const { productService } = require("../services/product.service");
 
 function create(request, response) {
   response.setHeader("content-type", "application/json");
-
-  if (!request.body.name) {
-    response.writeHead(400);
-    response.end(JSON.stringify({ message: "body is incorrect" }));
-  }
-
-  let product = {
-    name: request.body.name,
-    cost: request.body.cost,
-    categoryId: request.body.categoryId,
-  };
+  const product = request.body;
 
   productService
     .createProduct(product)
@@ -48,16 +38,12 @@ function findAll(request, response) {
 function findOne(request, response) {
   response.setHeader("content-type", "application/json");
   let productId = request.params.id;
-  if (!productId) {
-    response.writeHead(400);
-    response.end(JSON.stringify({ message: "product id is NaN" }));
-  }
 
   productService
     .getProductById(parseInt(productId))
     .then((data) => {
+      if (!data) throw new Error("No product found with given id");
       let returnValue = data.dataValues;
-      if (!returnValue) throw new Error("No product found with given id");
       returnValue.message = "product fetched successfully";
       response.writeHead(200);
       response.end(JSON.stringify(returnValue));
@@ -71,24 +57,18 @@ function findOne(request, response) {
 
 function update(request, response) {
   let productId = request.params.id;
-  let product = {
-    name: request.body.name,
-    cost: request.body.cost,
-    categoryId: request.body.categoryId,
-  };
+  let product = request.body;
 
   response.setHeader("content-type", "application/json");
   productService
     .updateProductById(product, productId)
     .then((data) => {
-      let returnValue = data;
-      returnValue.message = "product updated successfully";
-      response.writeHead(200);
-      response.end(JSON.stringify(returnValue));
+      if (data[1] !== 1) throw new Error("unable to update product");
+      findOne(request, response);
     })
     .catch((err) => {
       response.writeHead(500);
-      response.end(JSON.stringify({ message: "error occured" }));
+      response.end(JSON.stringify({ message: `${err}` }));
     });
 }
 
@@ -98,15 +78,14 @@ function deleteProduct(request, response) {
   response.setHeader("content-type", "application/json");
   productService
     .deleteProductById(productId)
-    .then((product) => {
-      let returnValue = product;
-      returnValue.message = "product deleted successfully";
+    .then((data) => {
+      if (data === 0) throw new Error("No product found with given id");
       response.writeHead(200);
-      response.end(JSON.stringify(returnValue));
+      response.end(JSON.stringify({ message: "product deleted successfully" }));
     })
     .catch((err) => {
       response.writeHead(500);
-      response.end(JSON.stringify({ message: "error occured" }));
+      response.end(JSON.stringify({ message: `${err}` }));
     });
 }
 

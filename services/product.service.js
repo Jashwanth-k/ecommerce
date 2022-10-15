@@ -1,9 +1,8 @@
-const { categorySchema } = require("../models/category.model");
-const { productSchema } = require("../models/product.model");
+const db = require("../models/index");
 
 class ProductService {
   constructor() {
-    this.schema = productSchema;
+    this.schema = db.product;
   }
 
   createProduct(product) {
@@ -15,7 +14,7 @@ class ProductService {
       include: [
         {
           required: true,
-          model: categorySchema,
+          model: db.category,
         },
       ],
     });
@@ -29,7 +28,7 @@ class ProductService {
       include: [
         {
           required: true,
-          model: categorySchema,
+          model: db.category,
         },
       ],
     });
