@@ -14,10 +14,13 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 
 const db = {};
 db.sequelize = sequelize;
+db.Op = Sequelize.Op;
 db.category = require("../models/category.model")(sequelize);
 db.product = require("../models/product.model")(sequelize);
 
-db.category.hasMany(db.product);
+db.category.hasMany(db.product, {
+  foreignKey: "categoryId",
+});
 db.product.belongsTo(db.category, {
   foreignKey: "categoryId",
 });

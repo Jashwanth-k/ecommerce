@@ -21,11 +21,11 @@ function create(request, response) {
 function findAll(request, response) {
   response.setHeader("content-type", "application/json");
   productService
-    .getProducts()
+    .getProducts(request.query)
     .then((products) => {
       let returnValue = products;
-      (returnValue.message = "products fetched successfully"),
-        response.writeHead(200);
+      returnValue.push({ message: "products fetched successfully" });
+      response.writeHead(200);
       response.end(JSON.stringify(returnValue));
     })
     .catch((err) => {

@@ -29,6 +29,26 @@ function init() {
     .bulkCreate(categories)
     .then(() => console.log("categories table is initiated"))
     .catch(() => console.log("error while initializing categories table"));
+
+  let products = [
+    {
+      name: "lenovo legion",
+      description: "this product is a laptop from lenovo with mid end features",
+      cost: 50000,
+      categoryId: 1,
+    },
+    {
+      name: "Dell xps",
+      description: "this product is a laptop from Dell with high end features",
+      cost: 120000,
+      categoryId: 1,
+    },
+  ];
+
+  db.product
+    .bulkCreate(products)
+    .then(() => console.log("products table is initiated"))
+    .catch(() => console.log("error while initializing products table"));
 }
 
 require("./routes/category.route")(app);

@@ -22,7 +22,7 @@ function findAll(request, response) {
     .getCategories()
     .then((data) => {
       let returnValue = data;
-      returnValue.message = "categories fetched successfully";
+      returnValue.push({ message: "categories fetched successfully" });
       response.writeHead(200);
       response.end(JSON.stringify(returnValue));
     })

@@ -9,12 +9,15 @@ class ProductService {
     return this.schema.create(product);
   }
 
-  getProducts() {
+  getProducts(filters) {
+    filters = this.#buildFilters(filters);
     return this.schema.findAll({
+      where: filters.product,
       include: [
         {
           required: true,
           model: db.category,
+          where: filters.category,
         },
       ],
     });
@@ -49,6 +52,22 @@ class ProductService {
         id: id,
       },
     });
+  }
+
+  #buildFilters(filters) {
+    const product = {};
+    const category = {};
+    product["cost"] = {
+      [db.Op.lte]: Number(filters["product.maxCost"]) || Number.MAX_VALUE,
+      [db.Op.gte]: Number(filters["product.minCost"]) || Number.MIN_VALUE,
+    };
+    if (filters["product.categoryId"])
+      product["categoryId"] = Number(filters["product.categoryId"]);
+    if (filters["category.name"]) {
+      category["name"] = filters["category.name"];
+    }
+
+    return { product, category };
   }
 }
 
