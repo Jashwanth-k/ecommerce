@@ -12,4 +12,7 @@ module.exports = {
     acquire: 30000, // maxtime in ms the pool will wait to get connnection before throwing error
     idle: 10000, // maxtime the connection will be idle before being released
   },
+  PORT: process.env.PORT,
+  SECRET: process.env.JWT_SECRET,
+  EXPIRES_IN: process.env.JWT_EXPIRES_IN,
 };

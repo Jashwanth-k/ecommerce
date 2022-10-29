@@ -1,4 +1,4 @@
-const config = require("../configs/db.config");
+const config = require("../configs/config");
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
@@ -17,12 +17,26 @@ db.sequelize = sequelize;
 db.Op = Sequelize.Op;
 db.category = require("../models/category.model")(sequelize);
 db.product = require("../models/product.model")(sequelize);
+db.user = require("../models/user.model")(sequelize);
+db.role = require("../models/role.model")(sequelize);
 
 db.category.hasMany(db.product, {
   foreignKey: "categoryId",
 });
 db.product.belongsTo(db.category, {
   foreignKey: "categoryId",
+});
+
+db.role.belongsToMany(db.user, {
+  through: "userRoles",
+  foreignKey: "roleId",
+  otherKey: "userId",
+});
+
+db.user.belongsToMany(db.role, {
+  through: "userRoles",
+  foreignKey: "userId",
+  otherKey: "roleId",
 });
 
 module.exports = db;

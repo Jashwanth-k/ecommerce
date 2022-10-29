@@ -1,5 +1,5 @@
 const express = require("express");
-const serverConfig = require("./configs/server.config");
+const config = require("./configs/config");
 const bodyParser = require("body-parser");
 const app = express();
 const db = require("./models/index");
@@ -10,12 +10,12 @@ db.sequelize
     force: true,
   })
   .then(() => {
+    console.log("tables dropped successfully");
     init();
-    console.log("tables dropped and created");
   });
 
-function init() {
-  let categories = [
+async function init() {
+  const categories = [
     {
       name: "Electronics",
       description: "this category consists of electronic items",
@@ -25,12 +25,8 @@ function init() {
       description: "this category consists of home appliances",
     },
   ];
-  db.category
-    .bulkCreate(categories)
-    .then(() => console.log("categories table is initiated"))
-    .catch(() => console.log("error while initializing categories table"));
 
-  let products = [
+  const products = [
     {
       name: "lenovo legion",
       description: "this product is a laptop from lenovo with mid end features",
@@ -45,15 +41,22 @@ function init() {
     },
   ];
 
-  db.product
-    .bulkCreate(products)
-    .then(() => console.log("products table is initiated"))
-    .catch(() => console.log("error while initializing products table"));
+  const roles = [{ name: "admin" }, { name: "user" }];
+
+  try {
+    db.category.bulkCreate(categories);
+    db.product.bulkCreate(products);
+    db.role.bulkCreate(roles);
+    console.log("tables created successfully");
+  } catch (err) {
+    console.log("error while creating tables");
+  }
 }
 
 require("./routes/category.route")(app);
 require("./routes/product.route")(app);
+require("./routes/auth.route")(app);
 
-app.listen(serverConfig.PORT, () => {
-  console.log(`App running on PORT: ${serverConfig.PORT}`);
+app.listen(config.PORT, () => {
+  console.log(`App running on PORT: ${config.PORT}`);
 });
