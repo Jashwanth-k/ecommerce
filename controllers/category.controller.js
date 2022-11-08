@@ -1,13 +1,12 @@
 const { categoryService } = require("../services/category.service");
 
 function create(request, response) {
-  response.setHeader("content-type", "application/json");
   categoryService
     .createCategory(request.body)
     .then((data) => {
       let returnValue = data;
       returnValue.message = "category created successfully";
-      response.writeHead(200);
+      response.writeHead(201);
       response.end(JSON.stringify(returnValue));
     })
     .catch((err) => {
@@ -34,8 +33,6 @@ function findAll(request, response) {
 
 function findOne(request, response) {
   const categoryId = parseInt(request.params.id);
-
-  response.setHeader("content-type", "application/json");
   categoryService
     .getCategoryById(categoryId)
     .then((data) => {
@@ -53,7 +50,6 @@ function findOne(request, response) {
 }
 
 function update(request, response) {
-  response.setHeader("content-type", "application/json");
   categoryService
     .updateCategory(parseInt(request.params.id), request.body)
     .then((data) => {
@@ -68,14 +64,14 @@ function update(request, response) {
 
 function deleteCategory(request, response) {
   const categoryId = parseInt(request.params.id);
-  response.setHeader("content-type", "application/json");
-
   categoryService
     .deleteCategory(categoryId)
     .then((data) => {
       if (data === 0) throw new Error("No category found with given id");
       response.writeHead(200);
-      response.end(JSON.stringify({ message: "row deleted" }));
+      response.end(
+        JSON.stringify({ message: "category deleted successfully" })
+      );
     })
     .catch((err) => {
       response.writeHead(500);

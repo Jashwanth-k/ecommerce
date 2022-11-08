@@ -3,7 +3,7 @@ let { roleService } = require("./role.service");
 const config = require("../configs/config");
 const db = require("../models");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const { jwtService } = require("../services/jwt.service");
 
 class AuthService {
   async signUp(user, roleNames = ["user"]) {
@@ -26,23 +26,21 @@ class AuthService {
   async signIn(user) {
     try {
       const userRes = await userService.findUserByEmail(user.email);
-      if (!userRes) throw new Error("incorrect email");
+      if (!userRes) throw new Error("user not found");
       // compares password with encrypted password in db and returns true if matches
       if (!bcrypt.compareSync(user.password, userRes.password))
         throw new Error("incorrect password");
 
-      const token = jwt.sign(
-        { id: userRes.id, email: userRes.email },
-        config.SECRET,
-        {
-          expiresIn: config.EXPIRES_IN,
-        }
+      // getRoles returns roles associated with the curr user
+      const rolesRes = [...(await userRes.getRoles())].map(
+        (el) => el.dataValues.name
       );
-      return {
+      const token = jwtService.createToken({
         id: userRes.id,
         email: userRes.email,
-        token: token,
-      };
+        roles: rolesRes,
+      });
+      return `Bearer ${token}`;
     } catch (err) {
       throw err;
     }
@@ -53,14 +51,3 @@ const authService = new AuthService();
 module.exports = {
   authService,
 };
-
-// userService.createUser(user).then((user) => {
-//   roleService
-//     .findRolesByName(roleNames)
-//     .then((roles) => {
-//       user.setRoles(roles);
-//     })
-//     .catch((err) =>
-//       Promise.reject(`err while creating user in auth: ${err}`)
-//     );
-// });

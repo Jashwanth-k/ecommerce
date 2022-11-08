@@ -17,9 +17,7 @@ module.exports = function (sequelize) {
         type: DataTypes.STRING,
       },
     },
-    {
-      tableName: "categories",
-    }
+    { tableName: "categories" }
   );
 
   return categorySchema;

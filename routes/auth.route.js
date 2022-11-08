@@ -13,7 +13,7 @@ module.exports = function (app) {
     authController.signUp
   );
 
-  app.get(
+  app.post(
     "/ecomm/api/v1/auth/signIn",
     [
       authValidator.checkMandatoryFields.bind(null, true),

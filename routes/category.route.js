@@ -1,11 +1,16 @@
 const categoryController = require("../controllers/category.controller");
 const categoryValidator = require("../validators/category.validator");
+const jwtValidator = require("../validators/auth.validator");
 
 module.exports = function (app) {
   // add categories
   app.post(
     "/ecomm/api/v1/category",
-    [categoryValidator.validateRequestCompleteBody],
+    [
+      categoryValidator.validateRequestCompleteBody,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
+    ],
     categoryController.create
   );
   // get all categories
@@ -22,13 +27,19 @@ module.exports = function (app) {
     [
       categoryValidator.validateRequestBody,
       categoryValidator.validateRequestId,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
     ],
     categoryController.update
   );
   // to delete a category
   app.delete(
     "/ecomm/api/v1/category/:id",
-    [categoryValidator.validateRequestId],
+    [
+      categoryValidator.validateRequestId,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
+    ],
     categoryController.deleteCategory
   );
 };

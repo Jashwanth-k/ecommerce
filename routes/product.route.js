@@ -1,11 +1,16 @@
 const productController = require("../controllers/product.controller");
 const productValidator = require("../validators/product.validator");
+const jwtValidator = require("../validators/auth.validator");
 
 module.exports = function (app) {
   // add products
   app.post(
     "/ecomm/api/v1/product",
-    [productValidator.validateRequestCompleteBody],
+    [
+      productValidator.validateRequestCompleteBody,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
+    ],
     productController.create
   );
   // get all products
@@ -19,13 +24,22 @@ module.exports = function (app) {
   // to update a product
   app.put(
     "/ecomm/api/v1/product/:id",
-    [productValidator.validateRequestBody, productValidator.validateRequestId],
+    [
+      productValidator.validateRequestBody,
+      productValidator.validateRequestId,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
+    ],
     productController.update
   );
   // to delete a product
   app.delete(
     "/ecomm/api/v1/product/:id",
-    [productValidator.validateRequestId],
+    [
+      productValidator.validateRequestId,
+      jwtValidator.verifyJwtToken,
+      jwtValidator.isAdmin,
+    ],
     productController.deleteProduct
   );
 };

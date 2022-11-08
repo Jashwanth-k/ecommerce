@@ -56,6 +56,7 @@ async function init() {
 require("./routes/category.route")(app);
 require("./routes/product.route")(app);
 require("./routes/auth.route")(app);
+require("./routes/cart.route")(app);
 
 app.listen(config.PORT, () => {
   console.log(`App running on PORT: ${config.PORT}`);

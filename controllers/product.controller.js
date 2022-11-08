@@ -1,7 +1,6 @@
 const { productService } = require("../services/product.service");
 
 function create(request, response) {
-  response.setHeader("content-type", "application/json");
   const product = request.body;
 
   productService
@@ -36,7 +35,6 @@ function findAll(request, response) {
 }
 
 function findOne(request, response) {
-  response.setHeader("content-type", "application/json");
   let productId = request.params.id;
 
   productService
@@ -51,7 +49,7 @@ function findOne(request, response) {
     .catch((err) => {
       response.writeHead(500);
       console.log(err);
-      response.end(JSON.stringify({ message: `error occured ${err}` }));
+      response.end(JSON.stringify({ message: `${err}` }));
     });
 }
 
@@ -59,7 +57,6 @@ function update(request, response) {
   let productId = request.params.id;
   let product = request.body;
 
-  response.setHeader("content-type", "application/json");
   productService
     .updateProductById(product, productId)
     .then((data) => {
@@ -75,7 +72,6 @@ function update(request, response) {
 function deleteProduct(request, response) {
   let productId = request.params.id;
 
-  response.setHeader("content-type", "application/json");
   productService
     .deleteProductById(productId)
     .then((data) => {

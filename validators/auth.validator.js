@@ -1,5 +1,7 @@
 const { signIn } = require("../controllers/auth.controller");
+const { jwtService } = require("../services/jwt.service");
 const { userService } = require("../services/user.service");
+const lodash = require("lodash");
 
 async function isEmailDuplicate(request, response, next) {
   let email = request.body.email;
@@ -20,7 +22,7 @@ async function isEmailDuplicate(request, response, next) {
   next();
 }
 
-async function checkMandatoryFields(signIn, request, response, next) {
+function checkMandatoryFields(signIn, request, response, next) {
   response.setHeader("content-type", "applications/json");
   if (
     (signIn && (!request.body.email || !request.body.password)) ||
@@ -38,7 +40,7 @@ async function checkMandatoryFields(signIn, request, response, next) {
   next();
 }
 
-async function validateEmail(request, response, next) {
+function validateEmail(request, response, next) {
   response.setHeader("content-type", "applications/json");
   const email = request.body.email;
   if (!email.includes("@") || !email.endsWith(".com")) {
@@ -49,8 +51,48 @@ async function validateEmail(request, response, next) {
   next();
 }
 
+async function verifyJwtToken(request, response, next) {
+  try {
+    const token = request.headers["token"];
+    if (!token || !token.includes("Bearer")) throw new Error("token is absent");
+
+    // decoded token
+    const decodedJwt = jwtService.validateToken(token.slice(7));
+    request.decodedJwt = decodedJwt;
+    next();
+  } catch (err) {
+    response.writeHead(498);
+    response.end(JSON.stringify({ message: `${err}` }));
+  }
+}
+
+function isAdmin(request, response, next) {
+  const userRoles = request.decodedJwt.roles;
+  if (!userRoles.includes("admin")) {
+    response.writeHead(403);
+    response.end(JSON.stringify({ message: "user can't access resources" }));
+    return;
+  }
+  next();
+}
+
 module.exports = {
   isEmailDuplicate,
   checkMandatoryFields,
   validateEmail,
+  verifyJwtToken,
+  isAdmin,
 };
+
+/*
+verify token data with data present in database
+ const userRes = await userService.findUserByEmail(decodedJwt.email);
+    if (!userRes) throw new Error("token expired");
+
+    const rolesRes = [...(await userRes.getRoles())].map(
+      (el) => el.dataValues.name
+    );
+    const user = { id: userRes.id, email: userRes.email, roles: rolesRes };
+    // compare two objects in depth
+    if (!lodash.isEqual(user, decodedJwt)) throw new Error("token expired");
+*/

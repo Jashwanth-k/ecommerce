@@ -15,10 +15,11 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 const db = {};
 db.sequelize = sequelize;
 db.Op = Sequelize.Op;
-db.category = require("../models/category.model")(sequelize);
-db.product = require("../models/product.model")(sequelize);
-db.user = require("../models/user.model")(sequelize);
-db.role = require("../models/role.model")(sequelize);
+db.category = require("./category.model")(sequelize);
+db.product = require("./product.model")(sequelize);
+db.user = require("./user.model")(sequelize);
+db.role = require("./role.model")(sequelize);
+db.cart = require("./cart.model")(sequelize);
 
 db.category.hasMany(db.product, {
   foreignKey: "categoryId",
@@ -37,6 +38,16 @@ db.user.belongsToMany(db.role, {
   through: "userRoles",
   foreignKey: "userId",
   otherKey: "roleId",
+});
+
+db.user.hasOne(db.cart);
+db.cart.belongsTo(db.user, {
+  foreignKey: "userId",
+});
+
+db.product.hasOne(db.cart);
+db.cart.belongsTo(db.product, {
+  foreignKey: "productId",
 });
 
 module.exports = db;
