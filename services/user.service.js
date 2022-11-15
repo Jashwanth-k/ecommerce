@@ -1,4 +1,4 @@
-const db = require("../models/loadIndex");
+const db = require("../models/index");
 
 class UserService {
   constructor() {
