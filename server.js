@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 db.sequelize
   .sync({
     force: true,
+    alter: true,
   })
   .then(() => {
     console.log("tables dropped successfully");

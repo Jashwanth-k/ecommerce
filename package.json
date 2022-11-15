@@ -16,6 +16,6 @@
     "jest": "^29.2.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
-    "sequelize": "^6.23.2"
+    "sequelize": "^6.25.5"
   }
 }

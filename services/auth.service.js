@@ -1,9 +1,8 @@
-let { userService } = require("./user.service");
-let { roleService } = require("./role.service");
-const config = require("../configs/config");
-const db = require("../models");
 const bcrypt = require("bcrypt");
 const { jwtService } = require("../services/jwt.service");
+const { cartService } = require("./cart.service");
+const { userService } = require("./user.service");
+const { roleService } = require("./role.service");
 
 class AuthService {
   async signUp(user, roleNames = ["user"]) {
@@ -18,6 +17,9 @@ class AuthService {
       // creates user and returns a promise
       const userRes = await userService.createUser(user);
       userRes.setRoles(roleRes);
+
+      // create cart for the user
+      await cartService.createCart({ userId: userRes.id });
     } catch (err) {
       throw err;
     }
@@ -35,10 +37,15 @@ class AuthService {
       const rolesRes = [...(await userRes.getRoles())].map(
         (el) => el.dataValues.name
       );
+
+      // get user's cartId from carts
+      const userCart = await cartService.getCartByUserId(userRes.id);
+
       const token = jwtService.createToken({
         id: userRes.id,
         email: userRes.email,
         roles: rolesRes,
+        cartId: userCart.id,
       });
       return `Bearer ${token}`;
     } catch (err) {

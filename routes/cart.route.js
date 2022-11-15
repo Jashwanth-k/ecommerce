@@ -12,13 +12,13 @@ module.exports = function (app) {
   // add product to cart
   app.post(
     "/ecomm/api/v1/cart/:id",
-    [authValidator.verifyJwtToken, productValidator.validateRequestId],
+    [productValidator.validateRequestId, authValidator.verifyJwtToken],
     cartController.create
   );
   // get product with id
   app.delete(
     "/ecomm/api/v1/cart/:id",
-    [authValidator.verifyJwtToken, productValidator.validateRequestId],
+    [productValidator.validateRequestId, authValidator.verifyJwtToken],
     cartController.removeProduct
   );
 };

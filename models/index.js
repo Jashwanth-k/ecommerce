@@ -40,14 +40,21 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId",
 });
 
-db.user.hasOne(db.cart);
-db.cart.belongsTo(db.user, {
-  foreignKey: "userId",
+db.cart.belongsToMany(db.product, {
+  through: "cartProducts",
+  foreignKey: "cartId",
+  otherKey: "productId",
 });
 
-db.product.hasOne(db.cart);
-db.cart.belongsTo(db.product, {
+db.product.belongsToMany(db.cart, {
+  through: "cartProducts",
   foreignKey: "productId",
+  otherKey: "cartId",
+});
+
+db.user.hasMany(db.cart);
+db.cart.belongsTo(db.user, {
+  foreignKey: "userId",
 });
 
 module.exports = db;

@@ -1,4 +1,3 @@
-const { signIn } = require("../controllers/auth.controller");
 const { jwtService } = require("../services/jwt.service");
 const { userService } = require("../services/user.service");
 const lodash = require("lodash");
@@ -61,6 +60,7 @@ async function verifyJwtToken(request, response, next) {
     request.decodedJwt = decodedJwt;
     next();
   } catch (err) {
+    response.setHeader("content-type", "application/json");
     response.writeHead(498);
     response.end(JSON.stringify({ message: `${err}` }));
   }

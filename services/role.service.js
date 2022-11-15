@@ -1,4 +1,4 @@
-const db = require("../models/index");
+const db = require("../models/loadIndex");
 
 class RoleService {
   constructor() {
