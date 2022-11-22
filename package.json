@@ -4,7 +4,9 @@
   "description": "Ecommerce application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:reset": "npx sequelize-cli db:migrate:undo:all"
   },
   "author": "Jashwanth",
   "license": "ISC",

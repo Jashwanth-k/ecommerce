@@ -14,12 +14,17 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 
 const db = {};
 db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 db.Op = Sequelize.Op;
-db.category = require("./category.model")(sequelize);
-db.product = require("./product.model")(sequelize);
-db.user = require("./user.model")(sequelize);
-db.role = require("./role.model")(sequelize);
-db.cart = require("./cart.model")(sequelize);
+db.category = require("./category.model")(sequelize, Sequelize.DataTypes);
+db.product = require("./product.model")(sequelize, Sequelize.DataTypes);
+db.user = require("./user.model")(sequelize, Sequelize.DataTypes);
+db.role = require("./role.model")(sequelize, Sequelize.DataTypes);
+db.cart = require("./cart.model")(sequelize, Sequelize.DataTypes);
+db.cartProduct = require("./cartProducts.model")(
+  sequelize,
+  Sequelize.DataTypes
+);
 
 db.category.hasMany(db.product, {
   foreignKey: "categoryId",
@@ -40,17 +45,19 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId",
 });
 
-db.cart.belongsToMany(db.product, {
-  through: "cartProducts",
-  foreignKey: "cartId",
-  otherKey: "productId",
-});
+// db.cart.belongsToMany(db.product, {
+//   through: db.cartProduct,
+// });
 
-db.product.belongsToMany(db.cart, {
-  through: "cartProducts",
-  foreignKey: "productId",
-  otherKey: "cartId",
-});
+// db.product.belongsToMany(db.cart, {
+//   through: db.cartProduct,
+// });
+
+db.cart.hasMany(db.cartProduct);
+db.cartProduct.belongsTo(db.cart);
+
+db.product.hasMany(db.cartProduct);
+db.cartProduct.belongsTo(db.product);
 
 db.user.hasMany(db.cart);
 db.cart.belongsTo(db.user, {

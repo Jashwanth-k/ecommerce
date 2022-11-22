@@ -13,7 +13,7 @@ module.exports = function (app) {
   app.post(
     "/ecomm/api/v1/cart/:id",
     [productValidator.validateRequestId, authValidator.verifyJwtToken],
-    cartController.create
+    cartController.addItems
   );
   // get product with id
   app.delete(

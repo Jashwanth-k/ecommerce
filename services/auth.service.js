@@ -39,13 +39,13 @@ class AuthService {
       );
 
       // get user's cartId from carts
-      const userCart = await cartService.getCartByUserId(userRes.id);
+      const cart = await cartService.getCartByUserId(userRes.id);
 
       const token = jwtService.createToken({
         id: userRes.id,
         email: userRes.email,
         roles: rolesRes,
-        cartId: userCart.id,
+        cartId: cart.id,
       });
       return `Bearer ${token}`;
     } catch (err) {
