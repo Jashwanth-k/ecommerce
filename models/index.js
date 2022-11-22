@@ -21,10 +21,7 @@ db.product = require("./product.model")(sequelize, Sequelize.DataTypes);
 db.user = require("./user.model")(sequelize, Sequelize.DataTypes);
 db.role = require("./role.model")(sequelize, Sequelize.DataTypes);
 db.cart = require("./cart.model")(sequelize, Sequelize.DataTypes);
-db.cartProduct = require("./cartProducts.model")(
-  sequelize,
-  Sequelize.DataTypes
-);
+db.cartProduct = require("./cartProduct.model")(sequelize, Sequelize.DataTypes);
 
 db.category.hasMany(db.product, {
   foreignKey: "categoryId",
@@ -45,21 +42,10 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId",
 });
 
-// db.cart.belongsToMany(db.product, {
-//   through: db.cartProduct,
-// });
+db.cart.belongsToMany(db.product, { through: db.cartProduct });
+db.product.belongsToMany(db.cart, { through: db.cartProduct });
 
-// db.product.belongsToMany(db.cart, {
-//   through: db.cartProduct,
-// });
-
-db.cart.hasMany(db.cartProduct);
-db.cartProduct.belongsTo(db.cart);
-
-db.product.hasMany(db.cartProduct);
-db.cartProduct.belongsTo(db.product);
-
-db.user.hasMany(db.cart);
+db.user.hasOne(db.cart);
 db.cart.belongsTo(db.user, {
   foreignKey: "userId",
 });

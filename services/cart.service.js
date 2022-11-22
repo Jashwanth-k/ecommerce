@@ -21,11 +21,11 @@ class CartService {
     return this.schema.findByPk(id);
   }
 
-  updateCost(userId, price) {
+  changeCost(id, price, inc) {
     return this.schema.increment("cost", {
-      by: price,
+      by: inc ? price : -price,
       where: {
-        userId: userId,
+        id: id,
       },
     });
   }

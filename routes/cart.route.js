@@ -15,6 +15,12 @@ module.exports = function (app) {
     [productValidator.validateRequestId, authValidator.verifyJwtToken],
     cartController.addItems
   );
+  // update quantity of product
+  app.put(
+    "/ecomm/api/v1/cart/:id",
+    [productValidator.validateRequestId, authValidator.verifyJwtToken],
+    cartController.modifyQuantity
+  );
   // get product with id
   app.delete(
     "/ecomm/api/v1/cart/:id",
