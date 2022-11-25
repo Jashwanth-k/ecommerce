@@ -22,6 +22,14 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.SMALLINT,
         allowNull: false,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn("now"),
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn("now"),
+      },
     },
     {
       tableName: "products",

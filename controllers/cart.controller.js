@@ -1,5 +1,4 @@
 const { cartService } = require("../services/cart.service");
-const { productService } = require("../services/product.service");
 const { cartProductService } = require("../services/cartProduct.service");
 
 function endResponse(response, statusCode, resMsg) {
@@ -8,16 +7,9 @@ function endResponse(response, statusCode, resMsg) {
 }
 
 async function addItems(request, response) {
-  const productId = Number(request.params.id);
+  const product = request.product;
   const cartId = request.decodedJwt.cartId;
   try {
-    // check product is present with given id
-    const product = await productService.getProductById(productId);
-    if (!product) {
-      endResponse(response, 404, "no product present with given id");
-      return;
-    }
-
     const cart = await cartService.getCartById(cartId);
     // add product to cartProducts table
     const res = await cart.addProducts([product]);
@@ -31,22 +23,20 @@ async function addItems(request, response) {
 }
 
 async function removeProduct(request, response) {
-  const productId = parseInt(request.params.id);
+  const product = request.product;
   const cartId = request.decodedJwt.cartId;
   try {
     const cart = await cartService.getCartById(cartId);
     const cartProduct = await cartProductService.getCartProductById(
       cartId,
-      productId
+      product.id
     );
-    const res = await cart.removeProducts([productId]);
+    const res = await cart.removeProducts([product.id]);
 
     if (res === 0) {
       endResponse(response, 404, "no product found in cart with given id");
       return;
     }
-    // getting the product
-    const product = await productService.getProductById(productId);
     // updating cost in cart
     await cartService.changeCost(
       cartId,
@@ -55,7 +45,6 @@ async function removeProduct(request, response) {
     );
     endResponse(response, 200, "product removed from cart");
   } catch (err) {
-    console.log(err);
     endResponse(response, 500, "internal server error");
   }
 }
@@ -94,16 +83,15 @@ async function getCart(request, response) {
 
 async function modifyQuantity(request, response) {
   const cartId = request.decodedJwt.cartId;
-  const productId = Number(request.params.id);
-  const state = JSON.parse(request.query.quantity);
+  const product = request.product;
   try {
+    const state = JSON.parse(request.query.quantity);
     // result format [[undefined,no_of changed entires]]
     const [[, res]] = await cartProductService.changeQuantity(
       cartId,
-      productId,
+      product.id,
       state
     );
-    const product = await productService.getProductById(productId);
     if (res === 0) {
       endResponse(response, 404, "no product found to update quantity");
       return;
@@ -112,7 +100,6 @@ async function modifyQuantity(request, response) {
     await cartService.changeCost(cartId, product.cost, state);
     endResponse(response, 200, "quantity changed successfully");
   } catch (err) {
-    console.log(err);
     endResponse(response, 500, "internal server error");
   }
 }

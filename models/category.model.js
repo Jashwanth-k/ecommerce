@@ -14,6 +14,14 @@ module.exports = function (sequelize, DataTypes) {
       description: {
         type: DataTypes.STRING,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn("now"),
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: sequelize.fn("now"),
+      },
     },
     { tableName: "categories" }
   );

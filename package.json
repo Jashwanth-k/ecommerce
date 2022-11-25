@@ -2,11 +2,14 @@
   "name": "ecommerce",
   "version": "1.0.0",
   "description": "Ecommerce application",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
-    "migrate:reset": "npx sequelize-cli db:migrate:undo:all"
+    "migrate:reset": "npx sequelize-cli db:migrate:undo:all",
+    "seed:reset": "npx sequelize-cli db:seed:undo:all",
+    "seed": "npx sequelize-cli db:seed:all",
+    "start": "npm run seed && node server.js"
   },
   "author": "Jashwanth",
   "license": "ISC",
