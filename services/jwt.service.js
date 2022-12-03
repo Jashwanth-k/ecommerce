@@ -1,13 +1,14 @@
-const config = require("../configs/config");
 const jwt = require("jsonwebtoken");
 
 class JwtService {
   createToken(payload) {
-    return jwt.sign(payload, config.SECRET, { expiresIn: config.EXPIRES_IN });
+    return jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
   }
 
   validateToken(token) {
-    return jwt.verify(token, config.SECRET);
+    return jwt.verify(token, process.env.JWT_SECRET);
   }
 }
 

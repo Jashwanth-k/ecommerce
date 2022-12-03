@@ -1,16 +1,22 @@
-const config = require("../configs/config");
+const env = process.env.NODE_ENV || "development";
+const config = require("../config/config")[env];
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
-  host: config.HOST,
-  dialect: config.dialect,
-  pool: {
-    max: config.pool.max,
-    min: config.pool.min,
-    acquire: config.pool.acquire,
-    idle: config.pool.idle,
-  },
-});
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    dialect: config.dialect,
+    pool: {
+      max: config.pool.max,
+      min: config.pool.min,
+      acquire: config.pool.acquire,
+      idle: config.pool.idle,
+    },
+  }
+);
 
 const db = {};
 db.sequelize = sequelize;

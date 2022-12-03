@@ -1,14 +1,14 @@
 const { productService } = require("../services/product.service");
 
-function create(request, response) {
+async function create(request, response) {
   const product = request.body;
 
-  productService
+  await productService
     .createProduct(product)
     .then((data) => {
       let returnValue = data.dataValues;
       returnValue.message = "product created successfully";
-      response.writeHead(200);
+      response.writeHead(201);
       response.end(JSON.stringify(returnValue));
     })
     .catch((err) => {
