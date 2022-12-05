@@ -4,13 +4,12 @@
   "description": "Ecommerce application",
   "main": "server.js",
   "scripts": {
-    "test": "jest && npm run seed",
-    "migrate": "npx sequelize-cli db:migrate",
-    "migrate:reset": "npx sequelize-cli db:migrate:undo:all",
+    "test": "jest --forceExit",
     "seed": "npx sequelize-cli db:seed:all",
-    "start": "node server.js",
-    "reset:db": "npx sequelize-cli db:drop && npx sequelize-cli db:create",
-    "pretest": "cross-env NODE_ENV=test && npm run reset:db"
+    "seed:undo": "npx sequelize-cli db:seed:undo:all",
+    "seed:roles": "npx sequelize-cli db:seed:undo --seed 20221125081857-role.seed.js --env production && npx sequelize-cli db:seed --seed 20221125081857-role.seed.js --env production",
+    "start": "cross-env NODE_ENV=production && npm run seed:roles && node server.js",
+    "pretest": "cross-env NODE_ENV=test && npm run seed:undo && npm run seed"
   },
   "author": "Jashwanth",
   "license": "ISC",

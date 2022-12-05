@@ -8,6 +8,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return Promise.resolve();
+    return await queryInterface.bulkDelete("roles", null);
   },
 };

@@ -26,10 +26,10 @@
     }
   },
   "production": {
-    "username": "root",
-    "password": "1234",
-    "database": "ecommerce",
-    "host": "127.0.0.1",
+    "username": "freedb_jashwanth",
+    "password": "KXD4bf3zB$9P$j*",
+    "database": "freedb_ecommerce database",
+    "host": "sql.freedb.tech",
     "dialect": "mysql",
     "pool": {
       "max": 5,

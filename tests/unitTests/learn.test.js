@@ -1,6 +1,7 @@
-let testfunctions = require("../testfunctions/testfunction");
+let testfunctions = require("../../testfunctions/testfunction");
 // beforeEach(() => console.log("tests started running"));
 afterAll(() => console.log("tests completed"));
+beforeEach(() => jest.useFakeTimers());
 
 test("test sum function", () => {
   expect(testfunctions.sum(1, 2)).toEqual(3);

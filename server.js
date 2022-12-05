@@ -1,9 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
 const db = require("./models/index");
+const app = require("./app");
 
-app.use(bodyParser.json());
 db.sequelize.sync({ alter: true }).then(() => {
   console.log("tables created successfully");
 });
