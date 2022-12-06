@@ -1,5 +1,8 @@
 "use strict";
-const rolesData = [{ name: "admin" }, { name: "user" }];
+const rolesData = [
+  { id: 1, name: "admin" },
+  { id: 2, name: "user" },
+];
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
