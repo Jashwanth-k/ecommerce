@@ -1,6 +1,5 @@
 const { jwtService } = require("../services/jwt.service");
 const { userService } = require("../services/user.service");
-const lodash = require("lodash");
 
 async function isEmailDuplicate(request, response, next) {
   let email = request.body.email;

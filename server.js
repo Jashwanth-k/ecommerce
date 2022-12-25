@@ -2,8 +2,13 @@ const db = require("./models/index");
 const app = require("./app");
 const apiEndPoints = require("./ecommerce.postman_collection.json");
 
-db.sequelize.sync({ alter: true }).then(() => {
+db.sequelize.sync({ alter: true }).then(async () => {
   console.log("tables created successfully");
+  await db.role.destroy({ where: {} });
+  db.role.bulkCreate([
+    { id: 1, name: "admin" },
+    { id: 2, name: "user" },
+  ]);
 });
 
 require("./routes/category.route")(app);
